@@ -78,7 +78,7 @@
         <transition on="submit" bind="true" validate="true" to="realSubmit"/>
     </view-state>
 
-    <view-state id="usernameSelectView" view="casLinkedAccountSelectionView" model="linkedAccountCredential">
+    <view-state id="viewAccountSelection" view="casLinkedAccountSelectionView" model="linkedAccountCredential">
         <binder>
             <binding property="initialAuthToken" required="true"/>
             <binding property="linkedUsername" required="true"/>
@@ -112,7 +112,7 @@
         <transition on="success" to="sendTicketGrantingTicket"/>
         <transition on="successWithWarnings" to="showMessages"/>
         <transition on="authenticationFailure" to="handleAuthenticationFailure"/>
-        <transition on="selectLinkedAccount" to="usernameSelectView"/>
+        <transition on="selectLinkedAccount" to="viewAccountSelection"/>
         <transition on="error" to="initializeLogin"/>
     </action-state>
 

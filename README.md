@@ -8,7 +8,7 @@ How to use.
 
 1. First deploy your existing CAS server and let it to extract if compressed.
 2. Build this project using dev-build.sh or dev-build-no-tests.sh
-3. Open deploy-linked-account-patch.sh and set CAS_SOURCE_PATH and CAS_DEPLOY variables and run.
+3. Open deploy-linked-account-patch.sh and set CAS_DEPLOY variable and run.
 4. Restart your CAS
 
 ### Default CAS documentation will continue from here.
