@@ -2,6 +2,7 @@ package org.jasig.cas.web.support;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.LinkedAccount;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.logout.LogoutRequest;
@@ -47,6 +48,8 @@ public final class WebUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(WebUtils.class);
 
     private static final String UNKNOWN_USER = "audit:unknown";
+
+    private static final String LINKED_ACCOUNTS = "linkedAccounts";
 
     /**
      * Instantiates a new web utils instance.
@@ -224,6 +227,17 @@ public final class WebUtils {
         final RequestContext context, @NotNull final TicketGrantingTicket ticket) {
         final String ticketValue = ticket != null ? ticket.getId() : null;
         putTicketGrantingTicketInScopes(context, ticketValue);
+    }
+
+    /**
+     * Put linked accounts in request and flow scopes.
+     *
+     * @param context        the context
+     * @param linkedAccounts list of linked accounts
+     */
+    public static void putLinkedAccountsInScopes(final RequestContext context,
+                                                 final List<LinkedAccount> linkedAccounts) {
+        context.getRequestScope().put(LINKED_ACCOUNTS, linkedAccounts);
     }
 
     /**

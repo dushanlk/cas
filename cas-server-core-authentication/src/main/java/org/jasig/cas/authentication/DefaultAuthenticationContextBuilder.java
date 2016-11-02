@@ -130,7 +130,8 @@ public final class DefaultAuthenticationContextBuilder implements Authentication
 
             authenticationBuilder.addSuccesses(authn.getSuccesses())
                     .addFailures(authn.getFailures())
-                    .addCredentials(authn.getCredentials());
+                    .addCredentials(authn.getCredentials())
+                    .setLinkedAccounts(authn.getLinkedAccounts());
         }
     }
 

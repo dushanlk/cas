@@ -146,4 +146,12 @@ public interface AuthenticationBuilder extends Serializable {
      */
     AuthenticationBuilder setAttributes(Map<String, Object> attributes);
 
+    /**
+     * Sets list of linked accounts.
+     *
+     * @param linkedAccounts list of linked account
+     * @return The builder instance.
+     * */
+    AuthenticationBuilder setLinkedAccounts(List<LinkedAccount> linkedAccounts);
+
 }

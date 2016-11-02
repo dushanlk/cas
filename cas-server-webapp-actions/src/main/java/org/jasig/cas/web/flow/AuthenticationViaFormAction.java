@@ -12,8 +12,11 @@ import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.DefaultAuthenticationContextBuilder;
 import org.jasig.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.jasig.cas.authentication.HandlerResult;
+import org.jasig.cas.authentication.LinkedAccount;
+import org.jasig.cas.authentication.LinkedAccountCredential;
 import org.jasig.cas.authentication.MessageDescriptor;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.ticket.AbstractTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketCreationException;
@@ -32,6 +35,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -51,6 +55,8 @@ public class AuthenticationViaFormAction {
     /** Authentication failure result. */
     public static final String AUTHENTICATION_FAILURE = "authenticationFailure";
 
+    /** Intermediate username select result. */
+    public static final String SELECT_LINKED_ACCOUNT = "selectLinkedAccount";
 
     /** Flow scope attribute that determines if authn is happening at a public workstation. */
     public static final String PUBLIC_WORKSTATION_ATTRIBUTE = "publicWorkstation";
@@ -77,14 +83,28 @@ public class AuthenticationViaFormAction {
     /**
      * Handle the submission of credentials from the post.
      *
-     * @param context the context
+     * @param context    the context
      * @param credential the credential
-     * @param messageContext the message context
      * @return the event
      * @since 4.1.0
      */
-    public final Event submit(final RequestContext context, final Credential credential,
-                              final MessageContext messageContext)  {
+    public final Event submit(final RequestContext context, final Credential credential) {
+        return getLinkedAccounts(context, credential);
+    }
+
+    /**
+     * Handle the submission of credentials from the post.
+     *
+     * @param context                 the context
+     * @param credential the credential
+     * @param messageContext          the message context
+     * @return the event
+     * @since 4.1.0
+     */
+    public final Event submitLinkedAccount(final RequestContext context,
+                                           final LinkedAccountCredential credential,
+                                           final MessageContext messageContext) {
+
         if (isRequestAskingForServiceTicket(context)) {
             return grantServiceTicket(context, credential);
         }
@@ -112,13 +132,17 @@ public class AuthenticationViaFormAction {
      * that are found in the request context.
      *
      * @param context the context
-     * @param credential the credential
+     * @param linkedAccountCredential the credential
      * @return the resulting event. Warning, authentication failure or error.
      * @since 4.1.0
      */
-    protected Event grantServiceTicket(final RequestContext context, final Credential credential) {
+    protected Event grantServiceTicket(final RequestContext context, final LinkedAccountCredential linkedAccountCredential) {
         final String ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
         try {
+            final UsernamePasswordCredential credential =
+                    new UsernamePasswordCredential(linkedAccountCredential.getLinkedUsername(), null,
+                            linkedAccountCredential.getExtractedToken());
+
             final Service service = WebUtils.getService(context);
             final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
                     this.authenticationSystemSupport.getPrincipalElectionStrategy());
@@ -144,19 +168,25 @@ public class AuthenticationViaFormAction {
         return newEvent(AbstractCasWebflowConfigurer.TRANSITION_ID_ERROR);
 
     }
+
     /**
      * Create ticket granting ticket for the given credentials.
      * Adds all warnings into the message context.
      *
      * @param context the context
-     * @param credential the credential
+     * @param linkedAccountCredential the credential
      * @param messageContext the message context
      * @return the resulting event.
      * @since 4.1.0
      */
-    protected Event createTicketGrantingTicket(final RequestContext context, final Credential credential,
+    protected Event createTicketGrantingTicket(final RequestContext context,
+                                               final LinkedAccountCredential linkedAccountCredential,
                                                final MessageContext messageContext) {
         try {
+            final UsernamePasswordCredential credential =
+                    new UsernamePasswordCredential(linkedAccountCredential.getLinkedUsername(), null,
+                            linkedAccountCredential.getExtractedToken());
+
             final Service service = WebUtils.getService(context);
             final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
                     this.authenticationSystemSupport.getPrincipalElectionStrategy());
@@ -173,6 +203,40 @@ public class AuthenticationViaFormAction {
                 return newEvent(SUCCESS_WITH_WARNINGS);
             }
             return newEvent(AbstractCasWebflowConfigurer.TRANSITION_ID_SUCCESS);
+
+        } catch (final AuthenticationException e) {
+            logger.debug(e.getMessage(), e);
+            return newEvent(AUTHENTICATION_FAILURE, e);
+        } catch (final Exception e) {
+            logger.debug(e.getMessage(), e);
+            return newEvent(AbstractCasWebflowConfigurer.TRANSITION_ID_ERROR, e);
+        }
+    }
+
+    /**
+     * Get linked accounts
+     * Adds all warnings into the message context.
+     *
+     * @param context    the context
+     * @param credential the credential
+     * @return the resulting event.
+     * @since 4.1.0
+     */
+    protected Event getLinkedAccounts(final RequestContext context, final Credential credential) {
+        try {
+            final Service service = WebUtils.getService(context);
+            final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
+                    this.authenticationSystemSupport.getPrincipalElectionStrategy());
+            final AuthenticationTransaction transaction =
+                    AuthenticationTransaction.wrap(credential);
+
+            this.authenticationSystemSupport.getAuthenticationTransactionManager().handle(transaction, builder);
+
+            final AuthenticationContext authenticationContext = builder.build(service);
+            final List<LinkedAccount> linkedAccounts = authenticationContext.getAuthentication().getLinkedAccounts();
+
+            WebUtils.putLinkedAccountsInScopes(context, linkedAccounts);
+            return newEvent(SELECT_LINKED_ACCOUNT);
 
         } catch (final AuthenticationException e) {
             logger.debug(e.getMessage(), e);

@@ -29,6 +29,8 @@ public class UsernamePasswordCredential implements Credential, Serializable {
     @Size(min=1, message = "required.password")
     private String password;
 
+    private LinkedAccountToken linkedAccountToken;
+
     /** Default constructor. */
     public UsernamePasswordCredential() {}
 
@@ -41,6 +43,19 @@ public class UsernamePasswordCredential implements Credential, Serializable {
     public UsernamePasswordCredential(final String userName, final String password) {
         this.username = userName;
         this.password = password;
+    }
+
+    /**
+     * Creates a new instance with the given username and password.
+     *
+     * @param username Non-null user name.
+     * @param password Non-null password.
+     * @param linkedAccountToken linkedUsername.
+     */
+    public UsernamePasswordCredential(final String username, final String password, final LinkedAccountToken linkedAccountToken) {
+        this.username = username;
+        this.password = password;
+        this.linkedAccountToken = linkedAccountToken;
     }
 
     public final String getPassword() {
@@ -61,6 +76,13 @@ public class UsernamePasswordCredential implements Credential, Serializable {
         this.username = userName;
     }
 
+    public LinkedAccountToken getLinkedAccountToken() {
+        return linkedAccountToken;
+    }
+
+    public void setLinkedUsername(final LinkedAccountToken linkedUsername) {
+        this.linkedAccountToken = linkedUsername;
+    }
 
     @Override
     public String getId() {

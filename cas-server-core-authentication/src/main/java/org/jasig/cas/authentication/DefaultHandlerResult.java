@@ -34,6 +34,9 @@ public class DefaultHandlerResult implements HandlerResult {
     /** List of warnings issued by the authentication source while authenticating the credential. */
     private List<MessageDescriptor> warnings;
 
+    /** List of linked accounts. **/
+    private List<LinkedAccount> linkedAccounts;
+
     /** No-arg constructor for serialization support. */
     private DefaultHandlerResult() {}
 
@@ -94,6 +97,33 @@ public class DefaultHandlerResult implements HandlerResult {
         this.warnings = warnings;
     }
 
+    /**
+     * Instantiates a new handler result.
+     *
+     * @param source the source
+     * @param metaData the meta data
+     * @param p the p
+     * @param warnings the warnings
+     * @param linkedAccounts the warnings
+     */
+    public DefaultHandlerResult(
+            final AuthenticationHandler source,
+            final CredentialMetaData metaData,
+            final Principal p,
+            final List<MessageDescriptor> warnings,
+            final List<LinkedAccount> linkedAccounts) {
+        Assert.notNull(source, "Source cannot be null.");
+        Assert.notNull(metaData, "Credential metadata cannot be null.");
+        this.handlerName = source.getName();
+        if (!StringUtils.hasText(this.handlerName)) {
+            this.handlerName = source.getClass().getSimpleName();
+        }
+        this.credentialMetaData = metaData;
+        this.principal = p;
+        this.warnings = warnings;
+        this.linkedAccounts = linkedAccounts;
+    }
+
     @Override
     public String getHandlerName() {
         return this.handlerName;
@@ -114,6 +144,11 @@ public class DefaultHandlerResult implements HandlerResult {
         return this.warnings == null
                 ? Collections.<MessageDescriptor>emptyList()
                 : Collections.unmodifiableList(this.warnings);
+    }
+
+    @Override
+    public List<LinkedAccount> getLinkedAccounts() {
+        return this.linkedAccounts;
     }
 
     @Override

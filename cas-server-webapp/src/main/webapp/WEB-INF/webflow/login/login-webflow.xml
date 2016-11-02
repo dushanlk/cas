@@ -5,6 +5,7 @@
                           http://www.springframework.org/schema/webflow/spring-webflow.xsd">
 
     <var name="credential" class="org.jasig.cas.authentication.UsernamePasswordCredential"/>
+    <var name="linkedAccountCredential" class="org.jasig.cas.authentication.LinkedAccountCredential"/>
 
     <!--
     <var name="credential" class="org.jasig.cas.authentication.RememberMeUsernamePasswordCredential" />
@@ -77,9 +78,32 @@
         <transition on="submit" bind="true" validate="true" to="realSubmit"/>
     </view-state>
 
+    <view-state id="usernameSelectView" view="casLinkedAccountSelectionView" model="linkedAccountCredential">
+        <binder>
+            <binding property="initialAuthToken" required="true"/>
+            <binding property="linkedUsername" required="true"/>
+        </binder>
+
+        <on-entry>
+            <set name="viewScope.commandName" value="'linkedAccountCredential'"/>
+        </on-entry>
+        <transition on="submit" bind="true" validate="true" to="linkAccountSubmit"/>
+    </view-state>
+
+    <action-state id="linkAccountSubmit">
+        <evaluate
+                expression="authenticationViaFormAction.submitLinkedAccount(flowRequestContext, flowScope.linkedAccountCredential, messageContext)"/>
+
+        <transition on="warn" to="warn"/>
+        <transition on="success" to="sendTicketGrantingTicket"/>
+        <transition on="successWithWarnings" to="showMessages"/>
+        <transition on="authenticationFailure" to="handleAuthenticationFailure"/>
+        <transition on="error" to="initializeLogin"/>
+    </action-state>
+
     <action-state id="realSubmit">
         <evaluate
-                expression="authenticationViaFormAction.submit(flowRequestContext, flowScope.credential, messageContext)"/>
+                expression="authenticationViaFormAction.submit(flowRequestContext, flowScope.credential)"/>
         <transition on="warn" to="warn"/>
         <!--
         To enable AUP workflows, replace the 'success' transition with the following:
@@ -88,6 +112,7 @@
         <transition on="success" to="sendTicketGrantingTicket"/>
         <transition on="successWithWarnings" to="showMessages"/>
         <transition on="authenticationFailure" to="handleAuthenticationFailure"/>
+        <transition on="selectLinkedAccount" to="usernameSelectView"/>
         <transition on="error" to="initializeLogin"/>
     </action-state>
 

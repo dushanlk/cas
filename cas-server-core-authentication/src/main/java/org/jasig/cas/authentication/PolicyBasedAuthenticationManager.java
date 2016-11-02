@@ -300,7 +300,8 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         if (principal != null) {
             builder.setPrincipal(principal);
         }
-        
+
+        builder.setLinkedAccounts(result.getLinkedAccounts());
         logger.debug("Final principal resolved for this authentication event is {}", principal);
     }
 

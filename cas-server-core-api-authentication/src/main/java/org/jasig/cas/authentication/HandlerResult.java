@@ -40,4 +40,11 @@ public interface HandlerResult extends Serializable {
      * @return the warnings
      */
     List<MessageDescriptor> getWarnings();
+
+    /**
+     * Get linked accounts.
+     *
+     * @return list of linked accounts
+     * */
+    List<LinkedAccount> getLinkedAccounts();
 }

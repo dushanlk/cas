@@ -37,6 +37,9 @@ public final class ImmutableAuthentication implements Authentication {
     /** Authentication metadata attributes. */
     private final Map<String, Object> attributes;
 
+    /** Linked account list. */
+    private final List<LinkedAccount> linkedAccounts;
+
     /** Map of handler name to handler authentication success event. */
     private final Map<String, HandlerResult> successes;
 
@@ -51,6 +54,7 @@ public final class ImmutableAuthentication implements Authentication {
         this.attributes = null;
         this.successes = null;
         this.failures = null;
+        this.linkedAccounts = null;
     }
 
     /**
@@ -62,6 +66,7 @@ public final class ImmutableAuthentication implements Authentication {
      * @param attributes Nullable map of authentication metadata.
      * @param successes Non-null map of authentication successes containing at least one entry.
      * @param failures Nullable map of authentication failures.
+     * @param linkedAccounts List of linked accounts.
      */
     public ImmutableAuthentication(
             final DateTime date,
@@ -69,7 +74,8 @@ public final class ImmutableAuthentication implements Authentication {
             final Principal principal,
             final Map<String, Object> attributes,
             final Map<String, HandlerResult> successes,
-            final Map<String, Class<? extends Exception>> failures) {
+            final Map<String, Class<? extends Exception>> failures,
+            final List<LinkedAccount> linkedAccounts) {
 
         Assert.notNull(date, "Date cannot be null");
         Assert.notNull(credentials, "Credential cannot be null");
@@ -84,6 +90,7 @@ public final class ImmutableAuthentication implements Authentication {
         this.attributes = attributes.isEmpty() ? null : attributes;
         this.successes = successes;
         this.failures = failures.isEmpty() ? null : failures;
+        this.linkedAccounts = linkedAccounts;
     }
 
     @Override
@@ -117,6 +124,11 @@ public final class ImmutableAuthentication implements Authentication {
     }
 
     @Override
+    public List<LinkedAccount> getLinkedAccounts() {
+        return linkedAccounts;
+    }
+
+    @Override
     public int hashCode() {
         final HashCodeBuilder builder = new HashCodeBuilder(97, 31);
         builder.append(this.principal);
@@ -125,6 +137,7 @@ public final class ImmutableAuthentication implements Authentication {
         builder.append(this.credentials);
         builder.append(this.successes);
         builder.append(this.failures);
+        builder.append(this.linkedAccounts);
         return builder.toHashCode();
     }
 
@@ -144,6 +157,7 @@ public final class ImmutableAuthentication implements Authentication {
         builder.append(this.authenticationDate, other.getAuthenticationDate());
         builder.append(wrap(this.attributes), other.getAttributes());
         builder.append(wrap(this.failures), other.getFailures());
+        builder.append(this.linkedAccounts, other.getLinkedAccounts());
         return builder.isEquals();
     }
 

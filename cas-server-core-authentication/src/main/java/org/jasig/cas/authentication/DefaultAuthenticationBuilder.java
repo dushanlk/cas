@@ -35,6 +35,9 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
     /** Authentication date. */
     private DateTime authenticationDate;
 
+    /** Linked accounts. */
+    private List<LinkedAccount> linkedAccounts;
+
     /**
      * Creates a new instance using the current date for the authentication date.
      */
@@ -167,6 +170,18 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
     }
 
     /**
+     * Sets linked account list.
+     *
+     * @param linkedAccounts list of linked accounts.
+     * @return This builder instance.
+     * */
+    @Override
+    public AuthenticationBuilder setLinkedAccounts(final List<LinkedAccount> linkedAccounts) {
+        this.linkedAccounts = linkedAccounts;
+        return this;
+    }
+
+    /**
      * Adds an authentication metadata attribute key-value pair.
      *
      * @param key Authentication attribute key.
@@ -285,7 +300,8 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
                 this.principal,
                 this.attributes,
                 this.successes,
-                this.failures);
+                this.failures,
+                this.linkedAccounts);
     }
 
     /**

@@ -5,6 +5,7 @@ import org.jasig.cas.authentication.BasicCredentialMetaData;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.DefaultHandlerResult;
 import org.jasig.cas.authentication.HandlerResult;
+import org.jasig.cas.authentication.LinkedAccount;
 import org.jasig.cas.authentication.MessageDescriptor;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.principal.Principal;
@@ -90,5 +91,22 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends 
     protected final HandlerResult createHandlerResult(final Credential credential, final Principal principal,
                                                       final List<MessageDescriptor> warnings) {
         return new DefaultHandlerResult(this, new BasicCredentialMetaData(credential), principal, warnings);
+    }
+
+    /**
+     * Helper method to construct a handler result
+     * on successful authentication events.
+     *
+     * @param credential the credential on which the authentication was successfully performed.
+     * Note that this credential instance may be different from what was originally provided
+     * as transformation of the username may have occurred, if one is in fact defined.
+     * @param principal the resolved principal
+     * @param warnings the warnings
+     * @param linkedAccounts the list of linked accounts
+     * @return the constructed handler result
+     */
+    protected final HandlerResult createHandlerResult(final Credential credential, final Principal principal,
+                                                      final List<MessageDescriptor> warnings, final List<LinkedAccount> linkedAccounts) {
+        return new DefaultHandlerResult(this, new BasicCredentialMetaData(credential), principal, warnings, linkedAccounts);
     }
 }

@@ -43,7 +43,8 @@ public class ImmutableAuthenticationTests {
                 new DefaultPrincipalFactory().createPrincipal("test"),
                 attributes,
                 successes,
-                failures);
+                failures,
+                null);
 
         try {
             auth.getCredentials().add(new BasicCredentialMetaData(new UsernamePasswordCredential()));
