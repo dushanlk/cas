@@ -4,11 +4,11 @@
 
 This can be used to implement an SSO when a single user has multiple accounts in a single system and wants to connect that kind of systems together over a single username and password.
 
-How to use.
+How to use,
 
-1. First deploy your existing CAS server and let it to extract if compressed.
+1. First deploy your existing CAS server and let it to extract if compressed
 2. Build this project using dev-build.sh or dev-build-no-tests.sh
-3. Open deploy-linked-account-patch.sh and set CAS_DEPLOY variable and run.
+3. Open deploy-linked-account-patch.sh and set CAS_DEPLOY variable and run
 4. Restart your CAS
 
 ### Default CAS documentation will continue from here.
