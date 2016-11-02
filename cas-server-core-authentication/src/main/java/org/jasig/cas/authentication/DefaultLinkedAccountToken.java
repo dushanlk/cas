@@ -1,5 +1,7 @@
 package org.jasig.cas.authentication;
 
+import org.joda.time.DateTime;
+
 import java.io.Serializable;
 
 /**
@@ -24,6 +26,11 @@ public class DefaultLinkedAccountToken implements LinkedAccountToken, Serializab
     private String linkedAccountUsername;
 
     /**
+     * Token created time in millis.
+     */
+    private long tokenCreatedTime;
+
+    /**
      * No-arg constructor for serialization support.
      */
     public DefaultLinkedAccountToken() {
@@ -35,40 +42,45 @@ public class DefaultLinkedAccountToken implements LinkedAccountToken, Serializab
      * @param username              the username
      * @param password              the password
      * @param linkedAccountUsername linked account username
+     * @param tokenCreatedTime      token created time in millis
      */
-    public DefaultLinkedAccountToken(final String username, final String password, final String linkedAccountUsername) {
+    public DefaultLinkedAccountToken(final String username, final String password, final String linkedAccountUsername,
+                                     final long tokenCreatedTime) {
         this.username = username;
         this.password = password;
         this.linkedAccountUsername = linkedAccountUsername;
+        this.tokenCreatedTime = tokenCreatedTime;
     }
 
     @Override
     public String getUsername() {
-        return this.username;
-    }
-
-    @Override
-    public void setUsername(final String username) {
-        this.username = username;
+        return username;
     }
 
     @Override
     public String getPassword() {
-        return this.password;
+        return password;
     }
 
     @Override
     public String getLinkedUsername() {
-        return this.linkedAccountUsername;
+        return linkedAccountUsername;
     }
 
     @Override
-    public boolean isValid() {
-        return true;
+    public long getTokenCreatedTime() {
+        return tokenCreatedTime;
+    }
+
+    @Override
+    public boolean isTokenExpired() {
+        //This token will consider as expired after 5 minutes (300000 milliseconds)
+        final int tokenTimeoutInMillis = 300000;
+        return new DateTime().getMillis() - tokenCreatedTime > tokenTimeoutInMillis;
     }
 
     @Override
     public String toString() {
-        return username + "|" + password + "|" + linkedAccountUsername;
+        return username + "|" + password + "|" + linkedAccountUsername + "|" + tokenCreatedTime;
     }
 }

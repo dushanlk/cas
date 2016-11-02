@@ -47,10 +47,13 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
     protected final HandlerResult doAuthentication(final Credential credential)
             throws GeneralSecurityException, PreventedException {
         final UsernamePasswordCredential userPass = (UsernamePasswordCredential) credential;
+        if (userPass.getLinkedAccountToken() != null && userPass.getLinkedAccountToken().isTokenExpired()) {
+            throw new AccountNotFoundException("Login expired.");
+        }
         if (userPass.getUsername() == null) {
             throw new AccountNotFoundException("Username is null.");
         }
-        
+
         final String transformedUsername= this.principalNameTransformer.transform(userPass.getUsername());
         if (transformedUsername == null) {
             throw new AccountNotFoundException("Transformed username is null.");

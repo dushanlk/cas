@@ -51,9 +51,18 @@ public class DefaultLinkedAccountTokenGenerator implements LinkedAccountTokenGen
             final String plainText = new String(original);
             final String[] dividedPlainText = plainText.split("\\|");
 
-            final int i = 3;
-            if (dividedPlainText.length == i) {
-                return new DefaultLinkedAccountToken(dividedPlainText[0], dividedPlainText[1], dividedPlainText[2]);
+            final int numOfTokenParts = 4;
+            final int indexUsername = 0;
+            final int indexPassword = 1;
+            final int indexLinkedUsername = 2;
+            final int indexTokenCreatedTime = 3;
+
+            if (dividedPlainText.length == numOfTokenParts) {
+                return new DefaultLinkedAccountToken(
+                        dividedPlainText[indexUsername],
+                        dividedPlainText[indexPassword],
+                        dividedPlainText[indexLinkedUsername],
+                        new Long(dividedPlainText[indexTokenCreatedTime]));
             }
 
         } catch (final Exception ex) {

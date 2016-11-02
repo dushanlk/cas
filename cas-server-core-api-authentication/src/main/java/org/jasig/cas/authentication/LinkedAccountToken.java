@@ -14,13 +14,6 @@ public interface LinkedAccountToken {
     String getUsername();
 
     /**
-     * Set username.
-     *
-     * @param username username
-     */
-    void setUsername(String username);
-
-    /**
      * Get password.
      *
      * @return the password
@@ -35,11 +28,18 @@ public interface LinkedAccountToken {
     String getLinkedUsername();
 
     /**
+     * Get token created time in millis.
+     *
+     * @return time in millis
+     */
+    long getTokenCreatedTime();
+
+    /**
      * Validate token.
      *
      * @return true or false
      */
-    boolean isValid();
+    boolean isTokenExpired();
 
     /**
      * Convert to String.
