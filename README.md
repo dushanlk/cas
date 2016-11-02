@@ -1,3 +1,18 @@
+# Central Authentication with 1 to many linked account authentication
+
+## Introduction
+
+This can be used to implement an SSO when a single user has multiple accounts in a single system and wants to connect that kind of systems together over a single username and password.
+
+How to use.
+
+1. First deploy your existing CAS server and let it to extract if compressed.
+2. Build this project using dev-build.sh or dev-build-no-tests.sh
+3. Open deploy-linked-account-patch.sh and set CAS_SOURCE_PATH and CAS_DEPLOY variables and run.
+4. Restart your CAS
+
+### Default CAS documentation will continue from here.
+
 # Central Authentication Service (CAS) [![License](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/apereo/cas/blob/master/LICENSE)
 [![](https://heroku-badge.herokuapp.com/?app=jasigcas&root=/cas/login)](http://jasigcas.heroku.com/cas)
 [![](https://heroku-badge.herokuapp.com/?app=jasigcasmgmt&root=/cas-services/login)](http://jasigcasmgmt.heroku.com/cas-services)
